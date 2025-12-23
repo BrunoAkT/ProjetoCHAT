@@ -31,6 +31,7 @@ export const styles = StyleSheet.create({
         borderTopRightRadius: 60,
         padding: 40,
         paddingTop: 50,
+        paddingBottom: 100,
     },
     footer: {
         position: 'absolute',
@@ -81,5 +82,23 @@ export const styles = StyleSheet.create({
     info: {
         justifyContent: 'center',
     },
-
+    statusBox:{
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    statusOptionOn: {
+        width: 10,
+        height: 10,
+        borderRadius: 10,
+        backgroundColor: Colors.green,
+        marginRight: 10,
+    },
+    statusOptionOff: {
+        width: 10,
+        height: 10,
+        borderRadius: 10,
+        backgroundColor: Colors.red,
+        marginRight: 10,
+    },  
+    
 })
