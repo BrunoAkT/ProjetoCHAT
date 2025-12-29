@@ -1,15 +1,26 @@
 import StyledBackground from "@/components/StyledBackground";
 import { Feather } from "@expo/vector-icons";
-import { Keyboard, KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { FlatList, Keyboard, KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { styles } from "@/styles/chat.styles";
 import { Colors } from "@/constants/Style.data";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
+import MessageBox from "@/components/MessageBox";
+
+
+interface Message {
+    stringMessage: string;
+    timeMessage?: string;
+    userID?: number;
+}
 
 export default function Chat() {
     const router = useRouter();
 
     const [status, setStatus] = useState("Online");
+
+    const [messages, setMessages] = useState<Message[]>([]);
+    const [inputMessage, setInputMessage] = useState("");
 
 
     // Estado para controlar a altura do padding inferior
@@ -36,6 +47,25 @@ export default function Chat() {
         };
     }, []);
 
+
+    const sendMessage = () => {
+        if (inputMessage.trim() !== "") {
+            const currentTime = new Date().toLocaleTimeString("br-BR", {
+                timeZone: "America/Sao_Paulo",
+                hour: "2-digit",
+                minute: "2-digit",
+            });
+            setMessages([
+                {
+                    stringMessage: inputMessage,
+                    timeMessage: currentTime,
+                    userID: 1
+                }, 
+                ...messages
+            ]);
+            setInputMessage("");
+        }
+    }
 
     return (
         <StyledBackground>
@@ -64,27 +94,30 @@ export default function Chat() {
                     <Feather name="more-vertical" size={24} color="black" />
                 </TouchableOpacity>
             </View>
-            <View style={{flex: 1, paddingBottom: paddingBottom }}>
+            <View style={{ flex: 1, paddingBottom: paddingBottom }}>
                 <View style={styles.content}>
-                    <ScrollView showsVerticalScrollIndicator={false}>
-                        <View>
-                            <Text style={styles.text}>Lorem ipsum dolor sit amet consectetur adipisicing elit. Porro omnis aperiam neque. Necessitatibus, eos. Explicabo aliquid dolor esse rem optio, voluptate soluta ab, dolorum repellendus beatae consequuntur maiores illum doloribus?e</Text>
-                            <Text style={styles.text}>Lorem ipsum dolor sit amet consectetur adipisicing elit. Porro omnis aperiam neque. Necessitatibus, eos. Explicabo aliquid dolor esse rem optio, voluptate soluta ab, dolorum repellendus beatae consequuntur maiores illum doloribus?e</Text>
-                            <Text style={styles.text}>Lorem ipsum dolor sit amet consectetur adipisicing elit. Porro omnis aperiam neque. Necessitatibus, eos. Explicabo aliquid dolor esse rem optio, voluptate soluta ab, dolorum repellendus beatae consequuntur maiores illum doloribus?e</Text>
-                            <Text style={styles.text}>Lorem ipsum dolor sit amet consectetur adipisicing elit. Porro omnis aperiam neque. Necessitatibus, eos. Explicabo aliquid dolor esse rem optio, voluptate soluta ab, dolorum repellendus beatae consequuntur maiores illum doloribus?e</Text>
-                            <Text style={styles.text}>Lorem ipsum dolor sit amet consectetur adipisicing elit. Porro omnis aperiam neque. Necessitatibus, eos. Explicabo aliquid dolor esse rem optio, voluptate soluta ab, dolorum repellendus beatae consequuntur maiores illum doloribus?e</Text>
-                            <Text style={styles.text}>Lorem ipsum dolor sit amet consectetur adipisicing elit. Porro omnis aperiam neque. Necessitatibus, eos. Explicabo aliquid dolor esse rem optio, voluptate soluta ab, dolorum repellendus beatae consequuntur maiores illum doloribus?e</Text>
-                            <Text style={styles.text}>AAAAAAAAAAAAAAAAAAAAA</Text>
-                        </View>
-                    </ScrollView>
+                    <FlatList
+                        data={messages}
+                        inverted
+                        renderItem={({ item }) => (
+                            <MessageBox stringMessage={item.stringMessage} timeMessage={item.timeMessage} userID={item.userID} />
+                        )}
+                        keyExtractor={(item, index) => index.toString()}
+                        showsVerticalScrollIndicator={false}
+                    />
                 </View>
-                <View style={styles.footer}>
+                <View style={{ ...styles.footer, paddingBottom: paddingBottom + 30 }}>
                     <View style={styles.inputBox}>
                         <TouchableOpacity>
                             <Feather name="file-plus" size={24} color={Colors.textPrimary} />
                         </TouchableOpacity>
-                        <TextInput style={styles.input} placeholder="Type a message..." />
-                        <TouchableOpacity>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Type a message..."
+                            value={inputMessage}
+                            onChangeText={setInputMessage}
+                        />
+                        <TouchableOpacity onPress={sendMessage}>
                             <Feather name="send" size={24} color={Colors.textPrimary} />
                         </TouchableOpacity>
                     </View>

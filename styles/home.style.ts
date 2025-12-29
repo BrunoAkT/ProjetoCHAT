@@ -43,6 +43,19 @@ export const styles = StyleSheet.create({
         paddingHorizontal: 10,
         borderRadius: 50,
         elevation: 5,
+    },
+    input:{
+        backgroundColor: Colors.white,
+        borderRadius: 20,
+        paddingHorizontal: 20,
+        fontFamily: Fonts.PoppinsRegular,
+        fontSize: 16,
+        position: 'absolute',
+        width: '100%',
+        zIndex: 1,
+        textAlign: 'center',
+        alignItems: 'center',
+        elevation: 5,
     }
 
 })

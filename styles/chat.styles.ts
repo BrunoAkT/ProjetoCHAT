@@ -4,7 +4,8 @@ import { Colors, Fonts } from "@/constants/Style.data";
 
 export const styles = StyleSheet.create({
     header: {
-        margin: 30,
+        marginHorizontal: 30,
+        marginBottom: 15,
         marginTop: 50,
         flexDirection: 'row',
         alignItems: 'center',
@@ -30,7 +31,6 @@ export const styles = StyleSheet.create({
         borderTopLeftRadius: 60,
         borderTopRightRadius: 60,
         padding: 40,
-        paddingTop: 50,
         paddingBottom: 100,
     },
     footer: {
@@ -39,7 +39,6 @@ export const styles = StyleSheet.create({
         left: 0,
         right: 0,
         alignItems: 'center',
-        paddingVertical: 40,
     },
     inputBox: {
         width: '90%',
