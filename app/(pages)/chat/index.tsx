@@ -1,23 +1,31 @@
+import MessageBox from "@/components/MessageBox";
 import StyledBackground from "@/components/StyledBackground";
-import { Feather } from "@expo/vector-icons";
-import { FlatList, Keyboard, KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { styles } from "@/styles/chat.styles";
 import { Colors } from "@/constants/Style.data";
+import { styles } from "@/styles/chat.styles";
+import { Feather } from "@expo/vector-icons";
+import * as DocumentPicker from 'expo-document-picker';
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import MessageBox from "@/components/MessageBox";
+import { FlatList, Keyboard, Platform, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 
 interface Message {
     stringMessage: string;
     timeMessage?: string;
     userID?: number;
+    file?: {
+        name: string;
+        uri: string;
+        size?: number;
+    }
 }
 
 export default function Chat() {
     const router = useRouter();
 
     const [status, setStatus] = useState("Online");
+    const [userId, setUserId] = useState(1);
+
 
     const [messages, setMessages] = useState<Message[]>([]);
     const [inputMessage, setInputMessage] = useState("");
@@ -59,11 +67,40 @@ export default function Chat() {
                 {
                     stringMessage: inputMessage,
                     timeMessage: currentTime,
-                    userID: 1
-                }, 
+                    userID: userId
+                },
                 ...messages
             ]);
             setInputMessage("");
+        }
+    }
+
+    const sendFile = async () => {
+        try {
+            const result = await DocumentPicker.getDocumentAsync({});
+            if (!result.canceled && result.assets) {
+                const asset = result.assets[0];
+                const currentTime = new Date().toLocaleTimeString("br-BR", {
+                    timeZone: "America/Sao_Paulo",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                });
+
+                const newFileMessage: Message = {
+                    stringMessage: `Arquivo: ${asset.name}`,
+                    timeMessage: currentTime,
+                    userID: userId,
+                    file: {
+                        name: asset.name,
+                        uri: asset.uri,
+                        size: asset.size
+                    }
+                };
+
+                setMessages([newFileMessage, ...messages]);
+            }
+        } catch (error) {
+            console.error("Erro ao selecionar o arquivo:", error);
         }
     }
 
@@ -100,7 +137,7 @@ export default function Chat() {
                         data={messages}
                         inverted
                         renderItem={({ item }) => (
-                            <MessageBox stringMessage={item.stringMessage} timeMessage={item.timeMessage} userID={item.userID} />
+                            <MessageBox stringMessage={item.stringMessage} timeMessage={item.timeMessage} userID={item.userID} file={item.file} />
                         )}
                         keyExtractor={(item, index) => index.toString()}
                         showsVerticalScrollIndicator={false}
@@ -108,7 +145,7 @@ export default function Chat() {
                 </View>
                 <View style={{ ...styles.footer, paddingBottom: paddingBottom + 30 }}>
                     <View style={styles.inputBox}>
-                        <TouchableOpacity>
+                        <TouchableOpacity onPress={sendFile}>
                             <Feather name="file-plus" size={24} color={Colors.textPrimary} />
                         </TouchableOpacity>
                         <TextInput
