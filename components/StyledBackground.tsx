@@ -10,7 +10,7 @@ interface StyledBackgroundProps {
 export default function StyledBackground({ children }: StyledBackgroundProps) {
     return (
         <LinearGradient
-            colors={[Colors.backgroudGradient, Colors.backgroudGradientTOO]}
+            colors={[Colors.backgroudGradient, Colors.backgroudGradientTOO, Colors.backgroudGradientTOO2]}
             style={styles.container}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}

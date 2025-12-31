@@ -1,7 +1,9 @@
 
 const Colors ={
+    backgroudGradientTOO2: '#acf3ccff',
     backgroudGradientTOO: '#a0c6ffff',
     backgroudGradient: '#c5acf3ff',
+
 
     textPrimary: '#000000',
     textSecondary: '#7C7C7C',
