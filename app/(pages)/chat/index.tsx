@@ -20,8 +20,12 @@ interface Message {
     }
 }
 
+
+
+
 export default function Chat() {
     const router = useRouter();
+
 
     const [status, setStatus] = useState("Online");
     const [userId, setUserId] = useState(1);

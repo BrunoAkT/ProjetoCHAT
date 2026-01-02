@@ -1,29 +1,37 @@
 import { Colors, Fonts } from "@/constants/Style.data";
 import { useRouter } from "expo-router";
-import { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 
-export default function ContactBox() {
+interface Contacts {
+    id: number,
+    name: string,
+    lastMessage: string,
+    time: string,
+    image?: string,
+    status: string,
+}
+
+
+export default function ContactBox({ contact }: { contact: Contacts }) {
     const router = useRouter();
 
-    const [status, setStatus] = useState("Online");
 
     return (
-        <TouchableOpacity style={styles.container} onPress={() => router.push("/chat")}>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <TouchableOpacity style={styles.container} onPress={() => router.push({ pathname: "/chat", params: { contactId: contact.id } })}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', width: '50%' }}>
                 <View style={styles.avatar}>
                     <Text>Avatar</Text>
                     {
-                        status === "Online" ?
+                        contact.status === "online" ?
                             <View style={styles.statusOptionOn}></View>
                             : <View style={styles.statusOptionOff}></View>
                     }
                 </View>
 
                 <View style={styles.info}>
-                    <Text style={styles.textName}>Name</Text>
-                    <Text style={styles.text}>Last Message</Text>
+                    <Text style={styles.textName} numberOfLines={1}>{contact.name}</Text>
+                    <Text style={styles.text} numberOfLines={1}>{contact.lastMessage}</Text>
                 </View>
             </View>
             <View style={styles.notificationBox}>
@@ -38,13 +46,12 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         padding: 10,
-        borderWidth: 1,
         justifyContent: 'space-between',
     },
     text: {
         fontFamily: Fonts.PoppinsRegular,
-        fontSize: 15,
-        lineHeight: 15,
+        fontSize: 13,
+        lineHeight: 13,
     },
     textName: {
         fontFamily: Fonts.PoppinsBold,

@@ -23,9 +23,9 @@ export const styles = StyleSheet.create({
     content: {
         backgroundColor: Colors.primaryOFF,
         flex: 1,
-        borderTopLeftRadius: 60,
-        borderTopRightRadius: 60,
-        padding: 40,
+        borderTopLeftRadius: 40,
+        borderTopRightRadius: 40,
+        padding: 20,
         paddingTop: 50,
     },
     footer: {
