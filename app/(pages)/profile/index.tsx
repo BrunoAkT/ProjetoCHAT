@@ -26,7 +26,7 @@ export default function Profile() {
         <StyledBackground>
 
             <View style={styles.header}>
-                <TouchableOpacity onPress={() => router.back()}>
+                <TouchableOpacity onPress={() => router.replace("/home")}>
                     <Feather name="arrow-left" size={24} color="black" />
                 </TouchableOpacity>
                 <Text style={styles.headerText}>Perfil</Text>
@@ -43,6 +43,9 @@ export default function Profile() {
                             <TouchableOpacity style={styles.Edit} onPress={() => changeName()}>
                                 <Feather name={isEditingName ? "check" : "edit"} size={30} color="black" />
                             </TouchableOpacity>
+                        </View>
+                        <View>
+                            <Text style={styles.text}>#0000</Text>
                         </View>
                         <TouchableOpacity style={status === "Online" ? styles.status : styles.statusOff} onPress={() => onModalStatus()}>
                             <Text style={styles.text}>
@@ -70,6 +73,12 @@ export default function Profile() {
                         </View>
                     </TouchableWithoutFeedback>
                 </Modal>
+
+                <View>
+                    <TouchableOpacity style={styles.logoutButton} onPress={() => {router.replace("/login")}}>
+                        <Text style={styles.logoutText}>Logout</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
 
         </StyledBackground>

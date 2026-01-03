@@ -1,10 +1,10 @@
-import { useRouter } from "expo-router";
-import { styles } from "@/styles/home.style";
-import { FlatList, Text, TextInput, TouchableOpacity, View } from "react-native";
-import StyledBackground from "@/components/StyledBackground";
 import ContactBox from "@/components/ContactBox";
+import StyledBackground from "@/components/StyledBackground";
+import { styles } from "@/styles/home.style";
 import { Feather } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import { useState } from "react";
+import { FlatList, Modal, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 
 interface Contacts {
     id: number,
@@ -22,6 +22,11 @@ export default function Home() {
     const [contactBar, setContactBar] = useState(false);
     const searchContact = () => {
         setContactBar(!contactBar);
+    }
+
+    const [friendsBar, setFriendsBar] = useState(false);
+    const searchFriends = () => {
+        setFriendsBar(!friendsBar);
     }
 
     const [contacts, setContacts] = useState<Contacts[]>([
@@ -56,9 +61,33 @@ export default function Home() {
             </FlatList>
         </View>
         <View style={styles.footer}>
-            <TouchableOpacity onPress={() => { router.push("/profile") }} style={styles.profileButton}>
+            <TouchableOpacity onPress={() => { router.replace("/profile") }} style={styles.profileButton}>
                 <Feather name="user" size={50} color="black" />
             </TouchableOpacity>
+            <TouchableOpacity onPress={() => { searchFriends() }} style={styles.addPersonButton}>
+                <Feather name="plus" size={50} color="white" />
+            </TouchableOpacity>
         </View>
+        <Modal
+            animationType="slide"
+            transparent={true}
+            visible={friendsBar}
+            onRequestClose={() => { searchFriends() }}
+        >
+            <TouchableOpacity style={styles.modalBackground} onPress={() => searchFriends()} activeOpacity={1}>
+                <TouchableWithoutFeedback>
+                    <View style={styles.modalContent}>
+                        <Text style={styles.title}>Adicionar Contato</Text>
+                        <Text style={styles.subTitle}>Digite o nome com o ID do contato</Text>
+                        <View style={styles.inputUserBox}>
+                            <TextInput style={styles.inputUser} placeholder="Nome#203"></TextInput>
+                            <TouchableOpacity>
+                                <Feather name="search" size={24} color="black" />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </TouchableWithoutFeedback>
+            </TouchableOpacity>
+        </Modal>
     </StyledBackground>
 }

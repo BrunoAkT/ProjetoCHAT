@@ -22,6 +22,7 @@ export const styles = StyleSheet.create({
         padding: 20,
         paddingTop: 40,
         marginTop: 20,
+        justifyContent: 'space-between',
     },
     avatarBox: {
         justifyContent: 'center',
@@ -118,5 +119,19 @@ export const styles = StyleSheet.create({
         borderRadius: 10,
         backgroundColor: Colors.red,
         marginRight: 10,
+    },
+    logoutButton:{
+        borderWidth: 1,
+        borderColor: Colors.red,
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 10,
+        borderRadius: 10,
+        marginBottom: 20,
+    },
+    logoutText: {
+        fontFamily: Fonts.PoppinsBold,
+        fontSize: 18,
+        color: Colors.red,
     }
 })
