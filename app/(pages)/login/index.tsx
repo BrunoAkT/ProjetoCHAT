@@ -1,5 +1,6 @@
 import AccountPage from "@/components/AccountPage";
 import StyledBackground from "@/components/StyledBackground";
+import api from "@/constants/api";
 import { Colors, Fonts } from "@/constants/Style.data";
 import { styles } from "@/styles/login.styles";
 import { Feather } from "@expo/vector-icons";
@@ -19,10 +20,21 @@ export default function Login() {
         setRegister(true);
     }
 
-    const handleSubmit = () => {
-
-
-        navigation.replace('/home');
+    const handleSubmit = async () => {
+        try {
+            console.log(process.env.EXPO_PUBLIC_API_URL);
+            const response = await api.post('/user/login', {
+                username: name,
+                password: password
+            })
+            if (response.data) {
+                console.log(response.data);
+                console.log("Login bem sucedido!");
+                navigation.replace('/home')
+            }
+        } catch (error) {
+            console.log("Erro ao fazer login:", error);
+        }
     }
 
     return (

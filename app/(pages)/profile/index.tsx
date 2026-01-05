@@ -24,7 +24,6 @@ export default function Profile() {
     }
     return (
         <StyledBackground>
-
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => router.replace("/home")}>
                     <Feather name="arrow-left" size={24} color="black" />
