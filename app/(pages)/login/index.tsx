@@ -2,16 +2,18 @@ import AccountPage from "@/components/AccountPage";
 import StyledBackground from "@/components/StyledBackground";
 import api from "@/constants/api";
 import { Colors, Fonts } from "@/constants/Style.data";
+import { AuthContext } from "@/context/auth";
 import { styles } from "@/styles/login.styles";
 import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Modal, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 export default function Login() {
 
     const navigation = useRouter();
     const [resgister, setRegister] = useState(false);
+    const { setUser }= useContext(AuthContext)
 
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
@@ -30,7 +32,8 @@ export default function Login() {
             if (response.data) {
                 console.log(response.data);
                 console.log("Login bem sucedido!");
-                navigation.replace('/home')
+                setUser(response.data);
+                navigation.replace("/home")
             }
         } catch (error) {
             console.log("Erro ao fazer login:", error);

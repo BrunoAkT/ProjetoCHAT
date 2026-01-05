@@ -3,11 +3,13 @@ import { styles } from "@/styles/profile.styles";
 import StyledBackground from "@/components/StyledBackground";
 import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { AuthContext } from "@/context/auth";
 
 
 export default function Profile() {
     const router = useRouter();
+    const { setUser } = useContext(AuthContext);
 
     const [name, setName] = useState("Name");
     const [isEditingName, setIsEditingName] = useState(false);
@@ -21,6 +23,11 @@ export default function Profile() {
 
     const changeName = () => {
         setIsEditingName(!isEditingName);
+    }
+    const logout = () => {
+        console.log("Logout");
+        setUser(null);
+        router.replace("/login");
     }
     return (
         <StyledBackground>
@@ -74,7 +81,7 @@ export default function Profile() {
                 </Modal>
 
                 <View>
-                    <TouchableOpacity style={styles.logoutButton} onPress={() => {router.replace("/login")}}>
+                    <TouchableOpacity style={styles.logoutButton} onPress={logout}>
                         <Text style={styles.logoutText}>Logout</Text>
                     </TouchableOpacity>
                 </View>

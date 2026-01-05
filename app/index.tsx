@@ -1,5 +1,10 @@
-import { Redirect } from "expo-router";
+import { AuthProvider } from "@/context/auth";
+import Routes from "./(routes)/routes";
 
 export default function Index() {
-  return <Redirect href={"/login"} />;
+  return (
+    <AuthProvider>
+      <Routes />
+    </AuthProvider>
+  );
 }
