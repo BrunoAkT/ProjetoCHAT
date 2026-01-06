@@ -4,10 +4,10 @@ import { AuthContext } from "@/context/auth";
 import { styles } from "@/styles/profile.styles";
 import { Feather } from "@expo/vector-icons";
 import axios from "axios";
+import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from "expo-router";
 import { useContext, useState } from "react";
 import { Image, Modal, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
-import * as ImagePicker from 'expo-image-picker';
 
 
 export default function Profile() {
@@ -76,7 +76,7 @@ export default function Profile() {
         }
     }
 
-    const changeImage = () => async () => {
+    const selectImage = async () => {
         const permissions = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (permissions.granted === false) {
             alert("Permissão para acessar a galeria é necessária!");
@@ -88,18 +88,45 @@ export default function Profile() {
         })
         if (!result.canceled) {
             const uri = result.assets[0].uri;
-            setImage(uri);
-            const formData = new FormData();
-
-            formData.append("avatar",{
-                uri: uri,
-                name: `avatar_${user._id}.jpg`,
-                type: "image/jpeg"
-            } as any)
-            console.log("Updating avatar image", result.assets[0].uri);
+            setImage(uri); // Para preview da imagem na tela
+            await changeImage(uri); // Passa a URI diretamente para a função de upload
         }
     }
+    const changeImage = async (uri: string) => {
+        const formData = new FormData();
+        formData.append("avatar", {
+            uri: uri,
+            name: `avatar.jpg`,
+            type: "image/jpeg"
+        } as any)
 
+        // Usamos a baseURL da sua instância do axios para não repetir a URL
+        const apiUrl = `${api.defaults.baseURL}/user/${user._id}/avatar`;
+
+        try {
+            // USANDO FETCH - A SOLUÇÃO DEFINITIVA AXIOS DANDO PAU COM UPLOAD DE IMAGEM NO REACT NATIVE PROBLEMA NO BODY COM FORMDATA 
+            const response = await fetch(apiUrl, {
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `Bearer ${user.token}`,
+                },
+                body: formData,
+            });
+
+            const responseData = await response.json();
+
+            if (!response.ok) {
+                throw new Error(responseData.message || 'Ocorreu um erro no servidor.');
+            }
+
+            console.log("Avatar atualizado com sucesso:", responseData);
+            setUser(responseData);
+
+        } catch (error) {
+            console.error("Falha ao atualizar imagem:", error);
+            alert(error.message);
+        }
+    }
     const logout = () => {
         console.log("Logout");
         setUser(null);
@@ -116,8 +143,8 @@ export default function Profile() {
 
             <View style={styles.container}>
                 <View style={styles.avatarBox}>
-                    <TouchableOpacity style={styles.avatar} onPress={changeImage()}>
-                        <Image source={{ uri: user?.avatarUrl }} style={styles.avatarImage} />
+                    <TouchableOpacity style={styles.avatar} onPress={selectImage}>
+                        <Image source={{ uri: image || user?.avatarUrl }} style={styles.avatarImage} />
                     </TouchableOpacity>
                     <View style={styles.info}>
                         <View style={styles.nameEdit}>
