@@ -13,7 +13,7 @@ export default function Login() {
 
     const navigation = useRouter();
     const [resgister, setRegister] = useState(false);
-    const { setUser }= useContext(AuthContext)
+    const { setUser } = useContext(AuthContext)
 
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
@@ -34,6 +34,7 @@ export default function Login() {
                 console.log("Login bem sucedido!");
                 setUser(response.data);
                 navigation.replace("/home")
+
             }
         } catch (error) {
             console.log("Erro ao fazer login:", error);

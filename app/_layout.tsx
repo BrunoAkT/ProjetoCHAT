@@ -1,5 +1,6 @@
+import { AuthProvider } from "@/context/auth";
+import { Poppins_400Regular, Poppins_700Bold, useFonts } from '@expo-google-fonts/poppins';
 import { Stack } from "expo-router";
-import { useFonts, Poppins_400Regular, Poppins_700Bold } from '@expo-google-fonts/poppins';
 
 export default function RootLayout() {
   let [fontsLoaded] = useFonts({ Poppins_400Regular, Poppins_700Bold });
@@ -8,7 +9,11 @@ export default function RootLayout() {
     return null;
   }
 
-  return <Stack screenOptions={{ headerShown: false }} />;
+  return (
+    <AuthProvider>
+      <Stack screenOptions={{ headerShown: false }} />
+    </AuthProvider>
+  );
 
 
 }
