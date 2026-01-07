@@ -1,12 +1,14 @@
 import MessageBox from "@/components/MessageBox";
 import StyledBackground from "@/components/StyledBackground";
+import api from "@/constants/api";
 import { Colors } from "@/constants/Style.data";
+import { useAuth } from "@/context/auth";
 import { styles } from "@/styles/chat.styles";
 import { Feather } from "@expo/vector-icons";
 import * as DocumentPicker from 'expo-document-picker';
-import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
-import { FlatList, Keyboard, Platform, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { use, useEffect, useState } from "react";
+import { FlatList, Image, Keyboard, Platform, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 
 interface Message {
@@ -20,16 +22,22 @@ interface Message {
     }
 }
 
-
-
+interface Friend {
+    _id: number;
+    name: string;
+    status: string;
+    avatarUrl?: string;
+}
 
 export default function Chat() {
     const router = useRouter();
-
+    const { user } = useAuth();
+    const { contactId } = useLocalSearchParams();
 
     const [status, setStatus] = useState("Online");
     const [userId, setUserId] = useState(1);
 
+    const [friend, setFriend] = useState<Friend | null>(null);
 
     const [messages, setMessages] = useState<Message[]>([]);
     const [inputMessage, setInputMessage] = useState("");
@@ -58,6 +66,27 @@ export default function Chat() {
             keyboardHideListener.remove();
         };
     }, []);
+
+
+    useEffect(() => {
+        loadProfile();
+    }, []);
+
+    const loadProfile = async () => {
+        try {
+            const response = await api.get('/user/private', {
+                params: { _id: contactId },
+                headers: {
+                    authorization: `Bearer ${user.token}`
+                }
+            })
+            if (response.data) {
+                setFriend(response.data);
+            }
+        } catch (error) {
+            console.log("Erro ao carregar perfil:", error);
+        }
+    }
 
 
     const sendMessage = () => {
@@ -117,17 +146,17 @@ export default function Chat() {
                 </TouchableOpacity>
                 <View style={styles.avatarBox}>
                     <View style={styles.avatar}>
-                        <Text>Avatar</Text>
+                        <Image source={friend?.avatarUrl ? { uri: friend.avatarUrl } : require('@/assets/default-avatar.jpg')} style={{ width: "100%", height: "100%", borderRadius: 50 }} />
                     </View>
                     <View style={styles.info}>
-                        <Text style={styles.textName}>Name</Text>
+                        <Text style={styles.textName}>{friend?.name}</Text>
                         <View style={styles.statusBox}>
                             {
-                                status === "Online" ?
+                                friend?.status === "online" ?
                                     <View style={styles.statusOptionOn}></View>
                                     : <View style={styles.statusOptionOff}></View>
                             }
-                            <Text style={styles.text}>{status}</Text>
+                            <Text style={styles.text}>{friend?.status}</Text>
                         </View>
                     </View>
                 </View>

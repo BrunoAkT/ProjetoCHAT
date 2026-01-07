@@ -101,4 +101,8 @@ export const styles = StyleSheet.create({
         fontSize: 16,
         fontFamily: Fonts.PoppinsRegular,
     },
+    usersFound:{
+        marginTop: 10,
+        height: '60%',
+    }
 })

@@ -70,7 +70,6 @@ export const styles = StyleSheet.create({
         fontSize: 18,
     },
     avatar: {
-        borderWidth: 1,
         width: 70,
         height: 70,
         borderRadius: 50,
