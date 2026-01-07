@@ -1,13 +1,14 @@
+import api from "@/constants/api";
 import { Colors, Fonts } from "@/constants/Style.data";
+import { useAuth } from "@/context/auth";
 import { Feather } from "@expo/vector-icons";
+import * as ImagePicker from 'expo-image-picker';
 import { useState } from "react";
 import { Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-import * as ImagePicker from 'expo-image-picker';
-import { useRouter } from "expo-router";
 
 export default function AccountPage({ onClose }: { onClose: () => void }) {
 
-    const navigation = useRouter();
+    const { setUser } = useAuth();
 
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
@@ -19,17 +20,38 @@ export default function AccountPage({ onClose }: { onClose: () => void }) {
 
     const [stepRegistration, setStepRegistration] = useState(1);
 
-    const nextStepRegistration = () => {
-        // if (!name || !email || !password || !confirmPassword) {
-        //     alert("Por favor, preencha todos os campos.");
-        //     return;
-        // }
-        // if (password !== confirmPassword) {
-        //     alert("As senhas não coincidem!");
-        //     return;
-        // }
+    const nextStepRegistration = async () => {
+        if (!name || !email || !password || !confirmPassword) {
+            alert("Por favor, preencha todos os campos.");
+            return;
+        }
+        if (password !== confirmPassword) {
+            alert("As senhas não coincidem!");
+            return;
+        }
+
+        if (await userVerification(email, 'email')) return;
 
         setStepRegistration(2);
+    }
+
+    const userVerification = async (user: string, type: 'email' | 'username') => {
+        try {
+
+            const params = { [type]: user };
+
+            const response = await api.get('/user/', { params });
+            if (response.data && response.data.length > 0) {
+                alert(`${type.charAt(0).toUpperCase() + type.slice(1)} já cadastrado. Por favor, utilize outro.`);
+                return true;
+            } else {
+                return false;
+            }
+
+        } catch (error) {
+            alert(`Erro na verificação de ${type}.`);
+            console.log(`Erro na verificação de ${type}:`, error);
+        }
     }
 
     const selectImage = async () => {
@@ -49,12 +71,51 @@ export default function AccountPage({ onClose }: { onClose: () => void }) {
 
     }
 
-    const handleSubmit = () => {
-        if (!image) {
-            setImage(null);
+    const handleSubmit = async () => {
+        if (!username) {
+            alert("Por favor, escolha um nome de usuário.");
+            return;
         }
-        alert("Conta criada com sucesso!");
-        navigation.replace('/home');
+        if (await userVerification(username, 'username')) return;
+
+        const formData = new FormData();
+
+        formData.append("name", name);
+        formData.append("username", username);
+        formData.append("email", email);
+        formData.append("password", password);
+        formData.append("status", "online");
+
+        if (image) {
+            const uriParts = image.split('.');
+            const fileType = uriParts[uriParts.length - 1];
+
+            formData.append("avatar", {
+                uri: image,
+                name: `avatar.${fileType}`,
+                type: `image/${fileType}`
+            } as any)
+        }
+
+        const apiFetch = `${process.env.EXPO_PUBLIC_API_URL}/user/register`;
+
+        try {
+            const response = await fetch(apiFetch, {
+                method: 'POST',
+                body: formData,
+            });
+            const responseData = await response.json();
+            
+            !response.ok && console.log("Erro na resposta da API:", response.statusText);
+            if (responseData) {
+                console.log("Registro bem sucedido!", responseData);
+                setUser(responseData);
+            }
+            
+        } catch (error) {
+            console.log("Erro ao registrar conta:", error);
+            alert("Não foi possível criar a conta. Tente novamente.");
+        }
     }
 
     return (
