@@ -15,6 +15,7 @@ export default function AccountPage({ onClose }: { onClose: () => void }) {
     const [confirmPassword, setConfirmPassword] = useState('');
 
     const [image, setImage] = useState<string | null>(null);
+    const [username, setUsername] = useState('');
 
     const [stepRegistration, setStepRegistration] = useState(1);
 
@@ -103,6 +104,11 @@ export default function AccountPage({ onClose }: { onClose: () => void }) {
                             <Feather name="camera" size={40} color={Colors.textSecondary} />
                         </TouchableOpacity>}
 
+                    <Text style={styles.text}>Escolha seu nome de usuário</Text>
+                    <View style={styles.inputBox}>
+                        <Feather name="user" size={24} color="black" />
+                        <TextInput placeholder="Username" style={styles.input} value={username} onChangeText={setUsername}></TextInput>
+                    </View>
                     <TouchableOpacity style={styles.registerButton} onPress={handleSubmit}>
                         <Text style={styles.text}>Concluir Cadastro</Text>
                     </TouchableOpacity>

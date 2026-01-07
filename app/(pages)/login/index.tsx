@@ -2,7 +2,7 @@ import AccountPage from "@/components/AccountPage";
 import StyledBackground from "@/components/StyledBackground";
 import api from "@/constants/api";
 import { Colors, Fonts } from "@/constants/Style.data";
-import { AuthContext } from "@/context/auth";
+import { AuthContext, useAuth } from "@/context/auth";
 import { styles } from "@/styles/login.styles";
 import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
@@ -13,8 +13,7 @@ export default function Login() {
 
     const navigation = useRouter();
     const [resgister, setRegister] = useState(false);
-    const { setUser } = useContext(AuthContext)
-
+    const { setUser } = useAuth();
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
 
@@ -33,7 +32,6 @@ export default function Login() {
                 console.log(response.data);
                 console.log("Login bem sucedido!");
                 setUser(response.data);
-                navigation.replace("/home")
 
             }
         } catch (error) {

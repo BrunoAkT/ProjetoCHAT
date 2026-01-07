@@ -124,13 +124,16 @@ export default function Profile() {
 
         } catch (error) {
             console.error("Falha ao atualizar imagem:", error);
-            alert(error.message);
+            if (error instanceof Error) {
+                alert(error.message);
+            } else {
+                alert("Ocorreu um erro desconhecido ao atualizar a imagem.");
+            }
         }
     }
     const logout = () => {
         console.log("Logout");
         setUser(null);
-        router.replace("/login");
     }
     return (
         <StyledBackground>

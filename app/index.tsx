@@ -1,7 +1,5 @@
-import Routes from "./(routes)/routes";
+import { Redirect } from 'expo-router';
 
-export default function Index() {
-  return (
-    <Routes />
-  );
+export default function StartPage() {
+  return <Redirect href="/home" />;
 }
