@@ -24,7 +24,6 @@ interface Conversation {
     };
 }
 
-
 export default function Home() {
 
     const router = useRouter();

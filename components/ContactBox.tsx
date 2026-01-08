@@ -25,7 +25,7 @@ export default function ContactBox({ contact }: { contact: Conversation }) {
 
 
     return (
-        <TouchableOpacity style={styles.container} onPress={() => router.push({ pathname: "/chat", params: { contactId: contact.otherParticipant._id } })}>
+        <TouchableOpacity style={styles.container} onPress={() => router.push({ pathname: "/chat", params: { contactId: contact.otherParticipant._id, conversationId: contact._id } })}>
             <View style={{ flexDirection: 'row', alignItems: 'center', width: '50%' }}>
                 <View style={styles.avatar}>
                     <Image

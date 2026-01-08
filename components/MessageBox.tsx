@@ -1,40 +1,48 @@
 import { Colors, Fonts } from "@/constants/Style.data";
+import { useAuth } from "@/context/auth";
 import { Feather } from "@expo/vector-icons";
 import { JSX } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 
 interface Message {
-    stringMessage: string;
-    timeMessage?: string;
-    userID?: number;
-    file?: {
-        name: string;
-        uri: string;
-        size?: number;
-    }
+    text: string;
+    createdAt?: string;
+    senderId?: number;
+    type?: string;
 }
 
-export default function MessageBox({ stringMessage, timeMessage, userID, file }: Message): JSX.Element {
+export default function MessageBox({ value }: { value: Message }): JSX.Element {
 
-    const userIDLocal = 1
-    const isCurrentUser = userIDLocal === userID;
+    const { user } = useAuth();
+
+    const userIDLocal = user._id;
+    const isCurrentUser = userIDLocal === value.senderId;
+
+
+    const localTime = value.createdAt
+        ? new Date(value.createdAt).toLocaleTimeString('pt-BR', {
+            hour: '2-digit',
+            minute: '2-digit',
+            timeZone: 'America/Sao_Paulo',
+        })
+        : '';
 
     return (
-        file ? (
+        value.type === "file" ? (
             <View style={[styles.wrapper, isCurrentUser ? styles.wrapperCurrentUser : styles.wrapperOtherUser]}>
                 <View style={[styles.container, isCurrentUser ? { ...styles.containerCurrentUser, backgroundColor: Colors.secundary, flexDirection: 'row', alignItems: 'center', gap: 10 } : { ...styles.containerOtherUser, backgroundColor: Colors.secundary, flexDirection: 'row', alignItems: 'center', gap: 10 }]}>
                     <Feather name="file" size={30} color={Colors.white} />
                     <View>
-                        <Text style={{ fontFamily: Fonts.PoppinsRegular, color: Colors.white }}>{file.name}</Text>
-                        {file.size && <Text style={{ fontFamily: Fonts.PoppinsBold, color: Colors.white, fontSize: 12 }}>{(file.size / 1024).toFixed(2)} KB</Text>}
+                        <Text style={{ fontFamily: Fonts.PoppinsRegular, color: Colors.white }}>{value.text}</Text>
+                        {/* {value.size && <Text style={{ fontFamily: Fonts.PoppinsBold, color: Colors.white, fontSize: 12 }}>{(value.size / 1024).toFixed(2)} KB</Text>} */}
                     </View>
                     <TouchableOpacity style={{ marginLeft: 'auto' }}>
                         <Feather name="download" size={24} color={Colors.white} />
                     </TouchableOpacity>
                 </View>
                 <View>
-                    <Text style={styles.textSub}>{timeMessage}</Text>
+                    <Text style={styles.textSub}>{localTime}</Text>
                 </View>
             </View>
         ) :
@@ -42,11 +50,11 @@ export default function MessageBox({ stringMessage, timeMessage, userID, file }:
             <View style={[styles.wrapper, isCurrentUser ? styles.wrapperCurrentUser : styles.wrapperOtherUser]}>
                 <View style={[styles.container, isCurrentUser ? styles.containerCurrentUser : styles.containerOtherUser]}>
                     <Text style={[styles.text, isCurrentUser ? styles.textCurrentUser : styles.textOtherUser]}>
-                        {stringMessage}
+                        {value.text}
                     </Text>
                 </View>
                 <View>
-                    <Text style={styles.textSub}>{timeMessage}</Text>
+                    <Text style={styles.textSub}>{localTime}</Text>
                 </View>
             </View>
     )

@@ -12,14 +12,10 @@ import { FlatList, Image, Keyboard, Platform, Text, TextInput, TouchableOpacity,
 
 
 interface Message {
-    stringMessage: string;
-    timeMessage?: string;
-    userID?: number;
-    file?: {
-        name: string;
-        uri: string;
-        size?: number;
-    }
+    text: string;
+    createdAt?: string;
+    senderId?: number;
+    type?: string;
 }
 
 interface Friend {
@@ -32,7 +28,7 @@ interface Friend {
 export default function Chat() {
     const router = useRouter();
     const { user } = useAuth();
-    const { contactId } = useLocalSearchParams();
+    const { contactId, conversationId } = useLocalSearchParams();
 
     const [userId, setUserId] = useState(1);
 
@@ -69,6 +65,7 @@ export default function Chat() {
 
     useEffect(() => {
         loadProfile();
+        loadConversation();
     }, []);
 
     const loadProfile = async () => {
@@ -87,53 +84,75 @@ export default function Chat() {
         }
     }
 
-
-    const sendMessage = () => {
-        if (inputMessage.trim() !== "") {
-            const currentTime = new Date().toLocaleTimeString("br-BR", {
-                timeZone: "America/Sao_Paulo",
-                hour: "2-digit",
-                minute: "2-digit",
+    const loadConversation = async () => {
+        try {
+            const response = await api.get('/messages', {
+                params: { conversationId: conversationId },
+                headers: {
+                    authorization: `Bearer ${user.token}`
+                }
             });
-            setMessages([
-                {
-                    stringMessage: inputMessage,
-                    timeMessage: currentTime,
-                    userID: userId
-                },
-                ...messages
-            ]);
-            setInputMessage("");
+
+            if (response.data) {
+                console.log("Mensagens carregadas:", response.data);
+                setMessages(response.data);
+            }
+        } catch (error) {
+            console.log("Erro ao carregar conversa:", error);
+        }
+    }
+
+
+    const sendMessage = async () => {
+        try {
+            const response = await api.post('/messages', {
+                conversationId: conversationId,
+                senderId: user._id,
+                type: "text",
+                text: inputMessage,
+                fileUrl: null,
+                receiverId: contactId,
+            }, {
+                headers: {
+                    authorization: `Bearer ${user.token}`
+                }
+            })
+            if (response.data) {
+                console.log("Mensagem enviada:", response.data);
+                setInputMessage('');
+            }
+        } catch (error) {
+            console.log("Erro ao enviar mensagem:", error);
         }
     }
 
     const sendFile = async () => {
-        try {
-            const result = await DocumentPicker.getDocumentAsync({});
-            if (!result.canceled && result.assets) {
-                const asset = result.assets[0];
-                const currentTime = new Date().toLocaleTimeString("br-BR", {
-                    timeZone: "America/Sao_Paulo",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                });
+        // try {
+        //     const result = await DocumentPicker.getDocumentAsync({});
+        //     if (!result.canceled && result.assets) {
+        //         const asset = result.assets[0];
+        //         const currentTime = new Date().toLocaleTimeString("br-BR", {
+        //             timeZone: "America/Sao_Paulo",
+        //             hour: "2-digit",
+        //             minute: "2-digit",
+        //         });
 
-                const newFileMessage: Message = {
-                    stringMessage: `Arquivo: ${asset.name}`,
-                    timeMessage: currentTime,
-                    userID: userId,
-                    file: {
-                        name: asset.name,
-                        uri: asset.uri,
-                        size: asset.size
-                    }
-                };
+        //         const newFileMessage: Message = {
+        //             stringMessage: `Arquivo: ${asset.name}`,
+        //             timeMessage: currentTime,
+        //             userID: userId,
+        //             file: {
+        //                 name: asset.name,
+        //                 uri: asset.uri,
+        //                 size: asset.size
+        //             }
+        //         };
 
-                setMessages([newFileMessage, ...messages]);
-            }
-        } catch (error) {
-            console.error("Erro ao selecionar o arquivo:", error);
-        }
+        //         setMessages([newFileMessage, ...messages]);
+        //     }
+        // } catch (error) {
+        //     console.error("Erro ao selecionar o arquivo:", error);
+        // }
     }
 
     return (
@@ -167,9 +186,8 @@ export default function Chat() {
                 <View style={styles.content}>
                     <FlatList
                         data={messages}
-                        inverted
                         renderItem={({ item }) => (
-                            <MessageBox stringMessage={item.stringMessage} timeMessage={item.timeMessage} userID={item.userID} file={item.file} />
+                            <MessageBox value={item} />
                         )}
                         keyExtractor={(item, index) => index.toString()}
                         showsVerticalScrollIndicator={false}
