@@ -2,25 +2,33 @@ import ContactBox from "@/components/ContactBox";
 import NewUserBox from "@/components/NewUserBox";
 import StyledBackground from "@/components/StyledBackground";
 import api from "@/constants/api";
+import { useAuth } from "@/context/auth";
 import { styles } from "@/styles/home.style";
 import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FlatList, Modal, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 
-interface Contacts {
-    id: number,
-    name: string,
-    lastMessage: string,
-    time: string,
-    avatarUrl?: string,
-    status: string,
+interface Conversation {
+    _id: string;
+    lastMessage: {
+        text: string;
+        createdAt: string;
+        senderId: string;
+    };
+    otherParticipant: {
+        _id: string;
+        name: string;
+        status: string;
+        avatarUrl?: string;
+    };
 }
+
 
 export default function Home() {
 
     const router = useRouter();
-
+    const { user } = useAuth();
     const [contactBar, setContactBar] = useState(false);
     const searchContact = () => {
         setContactBar(!contactBar);
@@ -36,7 +44,7 @@ export default function Home() {
         try {
             const response = await api.get('/user/', { params: { username: usernameSearch } });
             if (response.data && response.data.length > 0) {
-                console.log("Friend found:", response.data);
+                // console.log("Friend found:", response.data);
                 setNewContacts(response.data);
             } else {
                 alert("Usuário não encontrado.");
@@ -47,13 +55,30 @@ export default function Home() {
     }
 
 
+    const loadConversations = async () => {
+        try {
+            const response = await api.get('/conversations/', {
+                params: { userId: user._id },
+                headers: {
+                    authorization: `Bearer ${user.token}`
+                }
+            });
 
-    const [contacts, setContacts] = useState<Contacts[]>([
-        { id: 1, name: "Bruno Silva", lastMessage: "Oi, tudo bem?", time: "10:30 AM", status: "online" },
-        { id: 2, name: "Maria Souza", lastMessage: "Vamos marcar um encontro.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", time: "9:15 AM", status: "offline" },
-        { id: 3, name: "João Pereira", lastMessage: "Obrigado pelo ajuda!", time: "Yesterday", status: "online" },
-        { id: 4, name: "Ana Costa", lastMessage: "Até mais tarde!", time: "Monday", status: "offline" },
-    ])
+            if (response.data) {
+                // console.log("Conversations loaded:", response.data);
+                setContacts(response.data);
+            }
+        } catch (error) {
+            console.log("Error loading conversations:", error);
+        }
+    }
+
+    useEffect(() => {
+        loadConversations();
+    }, [])
+
+
+    const [contacts, setContacts] = useState<Conversation[]>([])
 
     const [newContacts, setNewContacts] = useState([])
 
@@ -77,7 +102,7 @@ export default function Home() {
                 renderItem={({ item }) => (
                     <ContactBox contact={item} />
                 )}
-                keyExtractor={(item) => item.id.toString()}
+                keyExtractor={(item) => item._id.toString()}
                 showsVerticalScrollIndicator={false}
             >
             </FlatList>

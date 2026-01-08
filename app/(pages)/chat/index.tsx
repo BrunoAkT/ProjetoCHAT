@@ -34,7 +34,6 @@ export default function Chat() {
     const { user } = useAuth();
     const { contactId } = useLocalSearchParams();
 
-    const [status, setStatus] = useState("Online");
     const [userId, setUserId] = useState(1);
 
     const [friend, setFriend] = useState<Friend | null>(null);

@@ -1,37 +1,55 @@
 import { Colors, Fonts } from "@/constants/Style.data";
+import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 
-interface Contacts {
-    id: number,
-    name: string,
-    lastMessage: string,
-    time: string,
-    image?: string,
-    status: string,
+interface Conversation {
+    _id: string;
+    lastMessage: {
+        text: string;
+        createdAt: string;
+        senderId: string;
+    };
+    otherParticipant: {
+        _id: string;
+        name: string;
+        status: string;
+        avatarUrl?: string;
+    };
 }
 
 
-export default function ContactBox({ contact }: { contact: Contacts }) {
+export default function ContactBox({ contact }: { contact: Conversation }) {
     const router = useRouter();
 
 
     return (
-        <TouchableOpacity style={styles.container} onPress={() => router.push({ pathname: "/chat", params: { contactId: contact.id } })}>
+        <TouchableOpacity style={styles.container} onPress={() => router.push({ pathname: "/chat", params: { contactId: contact.otherParticipant._id } })}>
             <View style={{ flexDirection: 'row', alignItems: 'center', width: '50%' }}>
                 <View style={styles.avatar}>
-                    <Text>Avatar</Text>
+                    <Image
+                        source={contact.otherParticipant.avatarUrl ? { uri: contact.otherParticipant.avatarUrl } : require('../assets/default-avatar.jpg')}
+                        style={{ width: 68, height: 68, borderRadius: 34 }}
+                    />
                     {
-                        contact.status === "online" ?
+                        contact.otherParticipant.status === "online" ?
                             <View style={styles.statusOptionOn}></View>
                             : <View style={styles.statusOptionOff}></View>
                     }
                 </View>
 
                 <View style={styles.info}>
-                    <Text style={styles.textName} numberOfLines={1}>{contact.name}</Text>
-                    <Text style={styles.text} numberOfLines={1}>{contact.lastMessage}</Text>
+                    <Text style={styles.textName} numberOfLines={1}>{contact.otherParticipant.name}</Text>
+                    {
+                        contact.lastMessage.senderId == contact.otherParticipant._id ? (
+                            <Text style={styles.text} numberOfLines={1}>{contact.lastMessage.text}</Text>
+                        ) : (
+                            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                                <Feather name="check" size={14} color={Colors.textPrimary} />
+                                <Text style={styles.text} numberOfLines={1}>{contact.lastMessage.text}</Text>
+                                </View>)
+                    }
                 </View>
             </View>
             <View style={styles.notificationBox}>
@@ -58,7 +76,6 @@ const styles = StyleSheet.create({
         fontSize: 18,
     },
     avatar: {
-        borderWidth: 1,
         width: 70,
         height: 70,
         borderRadius: 50,
