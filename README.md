@@ -4,10 +4,10 @@ This project is a chat application developed in three phases, each adding more c
 
 ## Phases of the Project
 
-### 🟢 Phase 1: Local Chat (No Internet)
+### 🟢 Phase 1: Local Chat 
 
 **Description:**
-A simple chat application that runs entirely in the browser. Messages are stored locally in the browser's memory or `localStorage`, making it a great starting point for learning React fundamentals.
+A simple chat application that runs entirely in the browser. Messages are stored locally in the browser's memory, making it a great starting point for learning React fundamentals.
 
 **Features:**
 - Works offline.
@@ -16,7 +16,6 @@ A simple chat application that runs entirely in the browser. Messages are stored
 **Technologies:**
 - **Frontend:** React
 - **State Management:** `useState`
-- **Storage (Optional):** `localStorage`
 
 ---
 
@@ -33,8 +32,9 @@ This phase introduces a backend to persist messages. It allows for multiple user
 **Technologies:**
 - **Frontend:** React
 - **HTTP Client:** `fetch` or `axios`
-- **Backend:** Node.js with Express
-- **Database:** MongoDB or MySQL
+- **Backend:** Node.js with Express and Cors
+- **Database:** MongoDB
+- **Authentication:** JWT (JSON Web Tokens).
 
 ---
 
@@ -53,5 +53,5 @@ The final phase implements real-time communication, similar to modern messaging 
 - **Frontend:** React
 - **Backend:** Node.js with Express
 - **Real-time Communication:** Socket.io
-- **Database:** MongoDB or MySQL
-- **Authentication:** JWT (JSON Web Tokens) or similar.
+- **Database:** MongoDB
+- **Authentication:** JWT (JSON Web Tokens).
