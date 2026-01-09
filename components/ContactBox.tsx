@@ -52,9 +52,9 @@ export default function ContactBox({ contact }: { contact: Conversation }) {
                     }
                 </View>
             </View>
-            <View style={styles.notificationBox}>
+            {/* <View style={styles.notificationBox}>
                 <Text style={styles.text}>1</Text>
-            </View>
+            </View> */}
         </TouchableOpacity>
     )
 }

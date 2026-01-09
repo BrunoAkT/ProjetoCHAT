@@ -24,6 +24,16 @@ interface Conversation {
     };
 }
 
+
+interface NewContacts {
+    _id: number,
+    name: string,
+    username: string,
+    status: string,
+    avatarUrl?: string,
+}
+
+
 export default function Home() {
 
     const router = useRouter();
@@ -55,6 +65,7 @@ export default function Home() {
 
 
     const loadConversations = async () => {
+        if (!user) return;
         try {
             const response = await api.get('/conversations/', {
                 params: { userId: user._id },
@@ -74,12 +85,12 @@ export default function Home() {
 
     useEffect(() => {
         loadConversations();
-    }, [])
+    }, [user])
 
 
     const [contacts, setContacts] = useState<Conversation[]>([])
 
-    const [newContacts, setNewContacts] = useState([])
+    const [newContacts, setNewContacts] = useState<NewContacts[]>([])
 
     return <StyledBackground>
         <View style={styles.header}>

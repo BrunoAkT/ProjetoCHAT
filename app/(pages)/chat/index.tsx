@@ -5,9 +5,8 @@ import { Colors } from "@/constants/Style.data";
 import { useAuth } from "@/context/auth";
 import { styles } from "@/styles/chat.styles";
 import { Feather } from "@expo/vector-icons";
-import * as DocumentPicker from 'expo-document-picker';
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { FlatList, Image, Keyboard, Platform, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 
@@ -28,14 +27,13 @@ interface Friend {
 export default function Chat() {
     const router = useRouter();
     const { user } = useAuth();
-    const { contactId, conversationId } = useLocalSearchParams();
-
-    const [userId, setUserId] = useState(1);
+    const { contactId, conversationId: initialConversationId } = useLocalSearchParams();
 
     const [friend, setFriend] = useState<Friend | null>(null);
 
     const [messages, setMessages] = useState<Message[]>([]);
     const [inputMessage, setInputMessage] = useState("");
+    const [conversationId, setConversationId] = useState(initialConversationId);
 
 
     // Estado para controlar a altura do padding inferior
@@ -87,15 +85,18 @@ export default function Chat() {
     const loadConversation = async () => {
         try {
             const response = await api.get('/messages', {
-                params: { conversationId: conversationId },
+                params: { conversationId: conversationId, userId: user._id, friendId: contactId },
                 headers: {
                     authorization: `Bearer ${user.token}`
                 }
             });
 
             if (response.data) {
-                console.log("Mensagens carregadas:", response.data);
+                // console.log("Mensagens carregadas:", response.data);
                 setMessages(response.data);
+                if(conversationId === undefined && response.data[0]?.conversationId){
+                    setConversationId(response.data[0]?.conversationId);
+                }
             }
         } catch (error) {
             console.log("Erro ao carregar conversa:", error);

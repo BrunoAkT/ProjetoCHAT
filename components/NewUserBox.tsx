@@ -1,22 +1,27 @@
 import { Colors, Fonts } from "@/constants/Style.data";
+import { useAuth } from "@/context/auth";
 import { useRouter } from "expo-router";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 
-interface Contacts {
+interface NewContacts {
     _id: number,
     name: string,
+    username: string,
     status: string,
     avatarUrl?: string,
 }
 
 
-export default function NewUserBox({ contact }: { contact: Contacts }) {
+export default function NewUserBox({ contact }: { contact: NewContacts }) {
     const router = useRouter();
-
+    const { user } = useAuth();
 
     return (
-        <TouchableOpacity style={styles.container} onPress={() => router.push({ pathname: "/chat", params: { contactId: contact._id } })}>
+        <TouchableOpacity style={styles.container} onPress={() => {
+            contact.username !== user.username &&
+            router.push({ pathname: "/chat", params: { contactId: contact._id } })
+             }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', width: '50%' }}>
                 <View style={styles.avatar}>
                     <Image source={contact.avatarUrl ? { uri: contact.avatarUrl } : require('../assets/default-avatar.jpg')} style={{ width: 70, height: 70, borderRadius: 50 }} />
@@ -28,7 +33,7 @@ export default function NewUserBox({ contact }: { contact: Contacts }) {
                 </View>
 
                 <View style={styles.info}>
-                    <Text style={styles.textName} numberOfLines={1}>{contact.name} #{contact._id}</Text>
+                    <Text style={styles.textName} numberOfLines={1}>{contact.name}</Text>
                 </View>
             </View>
         </TouchableOpacity>
