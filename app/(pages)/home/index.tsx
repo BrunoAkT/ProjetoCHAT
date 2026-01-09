@@ -3,6 +3,7 @@ import NewUserBox from "@/components/NewUserBox";
 import StyledBackground from "@/components/StyledBackground";
 import api from "@/constants/api";
 import { useAuth } from "@/context/auth";
+import { useSocket } from "@/context/socketContext";
 import { styles } from "@/styles/home.style";
 import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
@@ -100,6 +101,7 @@ export default function Home() {
                 <TouchableOpacity onPress={searchContact}>
                     <Feather name="search" size={24} color="black" />
                 </TouchableOpacity>
+
             </View>
             <View>
                 {contactBar && <TextInput style={styles.input} placeholder="AAA" />}

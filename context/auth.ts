@@ -1,4 +1,4 @@
-import React, { createContext, Dispatch, SetStateAction, useContext, useState } from "react";
+import React, { createContext, Dispatch, SetStateAction, useContext, useMemo, useState } from "react";
 
 interface AuthContextType {
     user: any;
@@ -15,7 +15,11 @@ const AuthContext = createContext<AuthContextType>(
 function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState(null);
 
-    return React.createElement(AuthContext.Provider, { value: { user, setUser } }, children);
+    const value = useMemo(() => ({ user, setUser }), [user]);
+
+
+    
+    return React.createElement(AuthContext.Provider, { value }, children);
 
 }
 

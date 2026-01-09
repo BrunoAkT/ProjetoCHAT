@@ -1,4 +1,5 @@
 import { AuthProvider, useAuth } from "@/context/auth";
+import { SocketProvider } from "@/context/socketContext";
 import { Poppins_400Regular, Poppins_700Bold, useFonts } from '@expo-google-fonts/poppins';
 import { Stack, useRouter, useSegments } from "expo-router";
 import { useEffect } from "react";
@@ -10,7 +11,7 @@ function RootLayoutNav() {
 
   useEffect(() => {
     const inAuthGroup = segments[0] === '(pages)';
-    
+
     // Se não estivermos no grupo de autenticação, não fazemos nada.
     // Isso é importante para evitar loops quando o app está carregando.
     if (!inAuthGroup) {
@@ -33,8 +34,8 @@ function RootLayoutNav() {
   }, [user, segments]); // O useEffect roda sempre que 'user' ou a rota mudar
 
   return (
-      <Stack screenOptions={{ headerShown: false }}>
-      </Stack>
+    <Stack screenOptions={{ headerShown: false }}>
+    </Stack>
   );
 }
 
@@ -47,7 +48,9 @@ export default function RootLayout() {
 
   return (
     <AuthProvider>
-      <RootLayoutNav />
+      <SocketProvider>
+        <RootLayoutNav />
+      </SocketProvider>
     </AuthProvider>
   );
 }
