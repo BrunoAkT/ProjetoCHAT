@@ -39,6 +39,7 @@ export default function Home() {
 
     const router = useRouter();
     const { user } = useAuth();
+    const { socket } = useSocket();
     const [contactBar, setContactBar] = useState(false);
     const searchContact = () => {
         setContactBar(!contactBar);
@@ -86,8 +87,29 @@ export default function Home() {
 
     useEffect(() => {
         loadConversations();
-    }, [user])
+    }, [])
 
+
+    useEffect(() => {
+        if (!socket) return;
+        socket.emit('join', user._id);
+
+        socket.on('conversationUpdated', () => {
+            loadConversations();
+        });
+
+
+        socket.on("userStatusChanged", ({ userId, status }) => {
+            console.log(`User ${userId} is now ${status}`);     
+        });
+
+
+        return () => {
+            socket.off('conversationUpdated');
+            socket.off('userStatusChanged');
+        }
+
+    }, [socket]);
 
     const [contacts, setContacts] = useState<Conversation[]>([])
 
