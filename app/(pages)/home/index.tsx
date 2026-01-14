@@ -8,7 +8,8 @@ import { styles } from "@/styles/home.style";
 import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { FlatList, Modal, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
+import { FlatList, LayoutAnimation, Modal, Platform, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, UIManager, View } from "react-native";
+
 
 interface Conversation {
     _id: string;
@@ -118,13 +119,10 @@ export default function Home() {
             <View style={styles.headerRight}>
                 <Text style={styles.headerText}>Contatos</Text>
                 <TouchableOpacity onPress={searchContact}>
-                    <Feather name="search" size={24} color="black" />
+                    <Feather name="search" size={28} color="black" />
                 </TouchableOpacity>
-
             </View>
-            <View>
-                {contactBar && <TextInput style={styles.input} placeholder="AAA" />}
-            </View>
+            {contactBar && <TextInput style={styles.input} placeholder="Pesquisar contato..." />}
         </View>
 
         <View style={styles.content}>
@@ -140,10 +138,10 @@ export default function Home() {
         </View>
         <View style={styles.footer}>
             <TouchableOpacity onPress={() => { router.replace("/profile") }} style={styles.profileButton}>
-                <Feather name="user" size={50} color="black" />
+                <Feather name="user" size={30} color="black" />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => { searchFriendsModal() }} style={styles.addPersonButton}>
-                <Feather name="plus" size={50} color="white" />
+                <Feather name="plus" size={30} color="white" />
             </TouchableOpacity>
         </View>
         <Modal
@@ -156,16 +154,16 @@ export default function Home() {
                 <TouchableWithoutFeedback>
                     <View style={styles.modalContent}>
                         <Text style={styles.title}>Adicionar Contato</Text>
-                        <Text style={styles.subTitle}>Digite o nome com o ID do contato</Text>
+                        <Text style={styles.subTitle}>Digite o nome de usuário do contato</Text>
                         <View style={styles.inputUserBox}>
-                            <TextInput style={styles.inputUser} placeholder="#Nome203" onChangeText={setUsernameSearch}></TextInput>
+                            <TextInput style={styles.inputUser} placeholder="Ex: user#1234" onChangeText={setUsernameSearch}></TextInput>
                             <TouchableOpacity onPress={searchFriends}>
                                 <Feather name="search" size={24} color="black" />
                             </TouchableOpacity>
                         </View>
 
                         <View style={styles.usersFound}>
-                            <Text style={styles.subTitle}>Usuarios:</Text>
+                            <Text style={styles.subTitle}>Usuários encontrados:</Text>
                             <FlatList
                                 data={newContacts}
                                 renderItem={({ item }) => (

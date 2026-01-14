@@ -92,6 +92,7 @@ export default function Profile() {
             await changeImage(uri); // Passa a URI diretamente para a função de upload
         }
     }
+
     const changeImage = async (uri: string) => {
         const formData = new FormData();
         formData.append("avatar", {
@@ -147,7 +148,7 @@ export default function Profile() {
             <View style={styles.container}>
                 <View style={styles.avatarBox}>
                     <TouchableOpacity style={styles.avatar} onPress={selectImage}>
-                        <Image source={{ uri: image || user?.avatarUrl }} style={styles.avatarImage} />
+                        <Image source={{ uri: image || user?.avatarUrl || "https://i.imgur.com/1JjwS4s.png" }} style={styles.avatarImage} />
                     </TouchableOpacity>
                     <View style={styles.info}>
                         <View style={styles.nameEdit}>
@@ -163,6 +164,7 @@ export default function Profile() {
                             <Text style={styles.text}>
                                 {user?.status}
                             </Text>
+                            <Feather name="chevron-down" size={18} color="black" />
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -188,6 +190,7 @@ export default function Profile() {
 
                 <View>
                     <TouchableOpacity style={styles.logoutButton} onPress={logout}>
+                        <Feather name="log-out" size={24} color="white" />
                         <Text style={styles.logoutText}>Logout</Text>
                     </TouchableOpacity>
                 </View>

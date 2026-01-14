@@ -1,19 +1,22 @@
-import { StyleSheet } from "react-native";
 import { Colors, Fonts } from "@/constants/Style.data";
+import { StyleSheet } from "react-native";
 
 
 export const styles = StyleSheet.create({
     header: {
-        margin: 30,
+        padding: 30,
+        paddingBottom: 10,
     },
     title: {
-        fontSize: 20,
+        fontSize: 28,
         fontFamily: Fonts.PoppinsBold,
+        color: Colors.textPrimary,
     },
     headerRight: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
+        marginTop: 10,
     },
     headerText: {
         fontFamily: Fonts.PoppinsRegular,
@@ -26,61 +29,60 @@ export const styles = StyleSheet.create({
         borderTopLeftRadius: 40,
         borderTopRightRadius: 40,
         padding: 20,
-        paddingTop: 50,
     },
     footer: {
         position: 'absolute',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        alignItems: 'flex-end',
-        paddingVertical: 40,
-        paddingHorizontal: 30,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
+        bottom: 30,
+        right: 30,
+        gap: 15,
     },
     profileButton: {
         backgroundColor: Colors.whiteOFF,
-        paddingVertical: 10,
-        paddingHorizontal: 10,
+        padding: 15,
         borderRadius: 50,
-        elevation: 5,
+        elevation: 8,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
     },
     input: {
         backgroundColor: Colors.white,
         borderRadius: 20,
         paddingHorizontal: 20,
+        paddingVertical: 10,
         fontFamily: Fonts.PoppinsRegular,
         fontSize: 16,
-        position: 'absolute',
-        width: '100%',
-        zIndex: 1,
-        textAlign: 'center',
-        alignItems: 'center',
         elevation: 5,
+        marginTop: 10,
     },
     addPersonButton: {
         backgroundColor: Colors.textPrimary,
-        paddingVertical: 10,
-        paddingHorizontal: 10,
+        padding: 15,
         borderRadius: 50,
-        elevation: 5,
+        elevation: 8,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
     },
     modalBackground: {
         flex: 1,
+        justifyContent: 'flex-end',
     },
     modalContent: {
         backgroundColor: Colors.primaryOFF,
-        flex: 1,
         borderTopLeftRadius: 40,
         borderTopRightRadius: 40,
-        padding: 20,
-        paddingTop: 50,
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        height: "35%",
+        padding: 30,
+        height: "40%",
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: -2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
     },
     inputUserBox: {
         flexDirection: 'row',
@@ -90,11 +92,12 @@ export const styles = StyleSheet.create({
         elevation: 5,
         borderRadius: 20,
         paddingHorizontal: 20,
+        marginTop: 15,
     },
     inputUser: {
         fontFamily: Fonts.PoppinsRegular,
         fontSize: 16,
-        alignItems: 'center',
+        paddingVertical: 10,
         width: '90%'
     },
     subTitle: {
@@ -102,7 +105,7 @@ export const styles = StyleSheet.create({
         fontFamily: Fonts.PoppinsRegular,
     },
     usersFound:{
-        marginTop: 10,
-        height: '60%',
+        marginTop: 20,
+        flex: 1,
     }
 })
