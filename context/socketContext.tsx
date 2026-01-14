@@ -21,7 +21,10 @@ export const useSocket = () => {
 export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   const socketRef = useRef<Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
-  const { user } = useAuth();
+  const { user, updateUserStatus } = useAuth();
+
+
+
 
   useEffect(() => {
     if (user?._id) {
@@ -37,12 +40,22 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
       newSocket.on('connect', () => {
         console.log('Conectado ao servidor Socket.io. ID:', newSocket.id);
         setIsConnected(true);
+
+
+
+        newSocket.on("userStatusChanged", ({ userId, status }) => {
+          console.log(`User ${userId} is now ${status}`);
+          if (userId === user._id) {
+            updateUserStatus(status)
+          }
+        });
+
       });
 
       newSocket.on('disconnect', () => {
         console.log('Desconectado do servidor Socket.io');
+        newSocket.off("userStatusChanged");
         setIsConnected(false);
-        socketRef.current = null;
       });
 
     } else {
@@ -58,7 +71,7 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
         socketRef.current = null;
       }
     };
-  }, [user]);
+  }, [user?._id]);
 
   const value = useMemo(() => ({
     socket: socketRef.current,

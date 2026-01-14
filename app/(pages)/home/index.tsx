@@ -55,7 +55,6 @@ export default function Home() {
         try {
             const response = await api.get('/user/', { params: { username: usernameSearch } });
             if (response.data && response.data.length > 0) {
-                // console.log("Friend found:", response.data);
                 setNewContacts(response.data);
             } else {
                 alert("Usuário não encontrado.");
@@ -77,7 +76,6 @@ export default function Home() {
             });
 
             if (response.data) {
-                // console.log("Conversations loaded:", response.data);
                 setContacts(response.data);
             }
         } catch (error) {
@@ -98,9 +96,8 @@ export default function Home() {
             loadConversations();
         });
 
-
-        socket.on("userStatusChanged", ({ userId, status }) => {
-            console.log(`User ${userId} is now ${status}`);     
+        socket.on('userStatusChanged', () => {
+            loadConversations();
         });
 
 
