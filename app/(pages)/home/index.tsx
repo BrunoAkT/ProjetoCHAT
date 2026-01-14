@@ -8,7 +8,7 @@ import { styles } from "@/styles/home.style";
 import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { FlatList, LayoutAnimation, Modal, Platform, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, UIManager, View } from "react-native";
+import { FlatList, LayoutAnimation, Modal, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 
 
 interface Conversation {
@@ -42,8 +42,13 @@ export default function Home() {
     const { user } = useAuth();
     const { socket } = useSocket();
     const [contactBar, setContactBar] = useState(false);
+    const [searchText, setSearchText] = useState('');
     const searchContact = () => {
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         setContactBar(!contactBar);
+        if (contactBar) {
+            setSearchText('');
+        }
     }
 
     const [friendsBar, setFriendsBar] = useState(false);
@@ -110,8 +115,21 @@ export default function Home() {
     }, [socket]);
 
     const [contacts, setContacts] = useState<Conversation[]>([])
+    const [filteredContacts, setFilteredContacts] = useState<Conversation[]>([]);
 
     const [newContacts, setNewContacts] = useState<NewContacts[]>([])
+
+    useEffect(() => {
+        if (searchText === '') {
+            setFilteredContacts(contacts);
+        } else {
+            setFilteredContacts(
+                contacts.filter(contact =>
+                    contact.otherParticipant.name.toLowerCase().includes(searchText.toLowerCase())
+                )
+            );
+        }
+    }, [searchText, contacts]);
 
     return <StyledBackground>
         <View style={styles.header}>
@@ -122,12 +140,12 @@ export default function Home() {
                     <Feather name="search" size={28} color="black" />
                 </TouchableOpacity>
             </View>
-            {contactBar && <TextInput style={styles.input} placeholder="Pesquisar contato..." />}
+            {contactBar && <TextInput style={styles.input} placeholder="Pesquisar contato..." value={searchText} onChangeText={setSearchText} />}
         </View>
 
         <View style={styles.content}>
             <FlatList
-                data={contacts}
+                data={filteredContacts}
                 renderItem={({ item }) => (
                     <ContactBox contact={item} />
                 )}
