@@ -29,7 +29,7 @@ interface Friend {
 export default function Chat() {
     const router = useRouter();
     const { user } = useAuth();
-    const { socket, isConnected } = useSocket(); // 1. Obter o socket do contexto
+    const { socket, isConnected } = useSocket();
 
     const { contactId, conversationId: initialConversationId } = useLocalSearchParams();
 
@@ -38,6 +38,10 @@ export default function Chat() {
     const [messages, setMessages] = useState<Message[]>([]);
     const [inputMessage, setInputMessage] = useState("");
     const [conversationId, setConversationId] = useState(initialConversationId);
+
+    const [friendTyping, setFriendTyping] = useState(false);
+    const [typing, setTyping] = useState(false);
+    const typingTimeoutRef = require('react').useRef<NodeJS.Timeout | null>(null);
 
 
     // Estado para controlar a altura do padding inferior
@@ -70,7 +74,6 @@ export default function Chat() {
         loadConversation();
     }, []);
 
-    // 2. useEffect para gerenciar a lógica do Socket.io
     useEffect(() => {
         if (!socket || !user?._id) return;
 
@@ -86,11 +89,26 @@ export default function Chat() {
             }
         };
 
+        const handleTyping = () => {
+            console.log("Friend is typing...");
+            setFriendTyping(true);
+        }
+        const handleStopTyping = () => {
+            console.log("Friend stopped typing.");
+            setFriendTyping(false);
+        }
+
         socket.on('receiveMessage', handleReceiveMessage);
+        
+        socket.on('typing', handleTyping);
+        socket.on('stopTyping', handleStopTyping);
+
 
         // 2.3. Função de limpeza: sai da sala e remove o ouvinte
         return () => {
             socket.off('receiveMessage', handleReceiveMessage);
+            socket.off('typing', handleTyping);
+            socket.off('stopTyping', handleStopTyping);
         };
     }, [socket, user, conversationId]); // Roda sempre que o socket ou o ID da conversa mudar
 
@@ -154,6 +172,26 @@ export default function Chat() {
         setInputMessage('');
     }
 
+    const handleInputChange = (text: string) => {
+        setInputMessage(text);
+
+        if (!socket) return;
+
+        if (!typing) {
+            setTyping(true);
+            socket.emit('typing', { conversationId, contactId });
+        }
+
+        if (typingTimeoutRef.current) {
+            clearTimeout(typingTimeoutRef.current);
+        }
+
+        typingTimeoutRef.current = setTimeout(() => {
+            setTyping(false);
+            socket.emit('stopTyping', { conversationId, contactId });
+        }, 2000); // 2 segundos de inatividade
+    };
+
     const sendFile = async () => {
         // try {
         //     const result = await DocumentPicker.getDocumentAsync({});
@@ -198,11 +236,13 @@ export default function Chat() {
                         <Text style={styles.textName}>{friend?.name}</Text>
                         <View style={styles.statusBox}>
                             {
-                                friend?.status === "online" ?
-                                    <View style={styles.statusOptionOn}></View>
-                                    : <View style={styles.statusOptionOff}></View>
+                                friendTyping ?
+                                    <Text style={styles.text}>digitando...</Text>
+                                    :
+                                    friend?.status === "online" ?
+                                        <><View style={styles.statusOptionOn}></View><Text style={styles.text}>{friend?.status}</Text></>
+                                        : <><View style={styles.statusOptionOff}></View><Text style={styles.text}>{friend?.status}</Text></>
                             }
-                            <Text style={styles.text}>{friend?.status}</Text>
                         </View>
                     </View>
                     {/* {
@@ -237,7 +277,7 @@ export default function Chat() {
                             style={styles.input}
                             placeholder={isConnected ? "Type a message..." : "Conectando..."}
                             value={inputMessage}
-                            onChangeText={setInputMessage}
+                            onChangeText={handleInputChange}
                             editable={isConnected}
                         />
                         <TouchableOpacity onPress={sendMessage}>
