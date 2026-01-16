@@ -4,6 +4,8 @@ This project is a mobile chat application for iOS and Android developed in three
 The objective of this work is to provide training in the concepts of using Sockets with React Native and Expo.
 Status (Phase 3)
 
+The file transfer method is offline.
+
 Back-end of this project
 https://github.com/BrunoAkT/ProjetoCHAT.BackEnd
 
