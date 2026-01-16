@@ -1,20 +1,36 @@
 # Project-Chat
 
-This project is a chat application developed in three phases, each adding more complexity and features.
+This project is a mobile chat application for iOS and Android developed in three phases, each adding more complexity and features.
+The objective of this work is to provide training in the concepts of using Sockets with React Native and Expo.
+Status (Phase 3)
+
+Back-end of this project
+https://github.com/BrunoAkT/ProjetoCHAT.BackEnd
+
+
+## Technologies Used in the Project
+
+- **Frontend:** React Native with Expo
+- **Language:** TypeScript
+- **Navigation:** Expo Router
+- **Real-time Communication:** Socket.io
+- **Backend:** Node.js with Express
+- **Database:** MongoDB
+- **Authentication:** JWT (JSON Web Tokens)
 
 ## Phases of the Project
 
 ### 🟢 Phase 1: Local Chat 
 
 **Description:**
-A simple chat application that runs entirely in the browser. Messages are stored locally in the browser's memory, making it a great starting point for learning React fundamentals.
+A simple chat application that runs entirely on the device. Messages are stored locally in the application's memory, making it a great starting point for learning React Native fundamentals.
 
 **Features:**
 - Works offline.
 - Messages are stored temporarily.
 
 **Technologies:**
-- **Frontend:** React
+- **Frontend:** React Native with Expo
 - **State Management:** `useState`
 
 ---
@@ -30,7 +46,7 @@ This phase introduces a backend to persist messages. It allows for multiple user
 - Communication between frontend and backend via HTTP requests.
 
 **Technologies:**
-- **Frontend:** React
+- **Frontend:** React Native with Expo
 - **HTTP Client:** `fetch` or `axios`
 - **Backend:** Node.js with Express and Cors
 - **Database:** MongoDB
@@ -50,7 +66,7 @@ The final phase implements real-time communication, similar to modern messaging 
 - See which users are online.
 
 **Technologies:**
-- **Frontend:** React
+- **Frontend:** React Native with Expo
 - **Backend:** Node.js with Express
 - **Real-time Communication:** Socket.io
 - **Database:** MongoDB
